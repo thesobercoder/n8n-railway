@@ -3,13 +3,24 @@
 
     handle @mcp {
         reverse_proxy {$N8N_HOST}:{$N8N_PORT} {
-            header_down X-Accel-Buffering no
-            header_down Cache-Control no-cache
             flush_interval -1
+            header_up Accept-Encoding "identity"
+            header_down Cache-Control "no-cache, no-store, no-transform"
+            header_down X-Accel-Buffering "no"
+            header_down -Content-Encoding
         }
     }
 
     handle {
-        reverse_proxy {$N8N_HOST}:{$N8N_PORT}
+        reverse_proxy {$N8N_HOST}:{$N8N_PORT} {
+            header_down X-Content-Type-Options "nosniff"
+            header_down X-Frame-Options "SAMEORIGIN"
+            header_down Referrer-Policy "strict-origin-when-cross-origin"
+            header_down Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        }
+    }
+
+    log {
+        output stdout
     }
 }
