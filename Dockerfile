@@ -2,11 +2,12 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install Caddy and supervisord
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    caddy \
-    supervisor \
-    && rm -rf /var/lib/apt/lists/*
+# Install Caddy (static binary)
+RUN curl -fsSL https://caddyserver.com/api/download?os=linux&arch=amd64 -o /usr/local/bin/caddy \
+    && chmod +x /usr/local/bin/caddy
+
+# Install supervisord via pip (Python available in n8n image)
+RUN pip install --no-cache-dir supervisor
 
 # Copy config files
 COPY Caddyfile /etc/caddy/Caddyfile
