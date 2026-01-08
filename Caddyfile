@@ -1,11 +1,15 @@
-:${PORT} {
-    reverse_proxy ${N8N_HOST}:${N8N_PORT} {
-        @mcp {
-            path /mcp/*
-            path /rest/push/*
+:{$PORT} {
+    @mcp path /mcp/* /rest/push/*
+
+    handle @mcp {
+        reverse_proxy {$N8N_HOST}:{$N8N_PORT} {
+            header_down X-Accel-Buffering no
+            header_down Cache-Control no-cache
+            flush_interval -1
         }
-        header_down @mcp X-Accel-Buffering no
-        header_down @mcp Cache-Control no-cache
-        flush_interval -1
+    }
+
+    handle {
+        reverse_proxy {$N8N_HOST}:{$N8N_PORT}
     }
 }
