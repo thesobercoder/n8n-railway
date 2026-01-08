@@ -1,11 +1,11 @@
-:{$PORT} {
-    reverse_proxy localhost:{$N8N_PORT} {
+:${PORT} {
+    reverse_proxy ${N8N_HOST}:${N8N_PORT} {
         @mcp {
             path /mcp/*
             path /rest/push/*
         }
         header_down @mcp X-Accel-Buffering no
-        header_down @mcp Cache-Control "no-cache"
+        header_down @mcp Cache-Control no-cache
         flush_interval -1
     }
 }
