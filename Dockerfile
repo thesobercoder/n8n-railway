@@ -1,18 +1,19 @@
-FROM caddy:2-alpine AS caddy
+FROM caddy:2-builder AS caddy-builder
+RUN xcaddy build
 
-FROM golang:alpine AS goreman
-RUN go install github.com/mattn/goreman@latest
+FROM golang:1.21 AS goreman-builder
+RUN CGO_ENABLED=0 GOOS=linux go install github.com/mattn/goreman@latest
 
 FROM n8nio/n8n:latest
 
 USER root
 
-# Copy binaries
-COPY --from=caddy /usr/bin/caddy /usr/local/bin/caddy
-COPY --from=goreman /go/bin/goreman /usr/local/bin/goreman
+# Copy static binaries
+COPY --from=caddy-builder /usr/bin/caddy /usr/local/bin/caddy
+COPY --from=goreman-builder /go/bin/goreman /usr/local/bin/goreman
 
-# Make executable and verify
-RUN chmod +x /usr/local/bin/goreman /usr/local/bin/caddy
+# Verify binaries exist
+RUN ls -la /usr/local/bin/caddy /usr/local/bin/goreman
 
 # Copy config files
 COPY Caddyfile /etc/caddy/Caddyfile
