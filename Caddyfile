@@ -1,0 +1,11 @@
+:{$PORT} {
+    reverse_proxy localhost:5678 {
+        @mcp {
+            path /mcp/*
+            path /rest/push/*
+        }
+        header_down @mcp X-Accel-Buffering no
+        header_down @mcp Cache-Control "no-cache"
+        flush_interval -1
+    }
+}
