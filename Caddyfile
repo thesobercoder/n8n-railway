@@ -1,5 +1,5 @@
 :{$PORT} {
-    reverse_proxy localhost:5678 {
+    reverse_proxy localhost:{$N8N_PORT} {
         @mcp {
             path /mcp/*
             path /rest/push/*
