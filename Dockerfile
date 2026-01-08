@@ -11,10 +11,11 @@ USER root
 COPY --from=caddy /usr/bin/caddy /usr/local/bin/caddy
 COPY --from=goreman /go/bin/goreman /usr/local/bin/goreman
 
+# Make executable and verify
+RUN chmod +x /usr/local/bin/goreman /usr/local/bin/caddy
+
 # Copy config files
 COPY Caddyfile /etc/caddy/Caddyfile
-COPY Procfile /app/Procfile
+COPY Procfile /Procfile
 
-WORKDIR /app
-
-CMD ["goreman", "start"]
+CMD ["/usr/local/bin/goreman", "-f", "/Procfile", "start"]
